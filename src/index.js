@@ -1,3 +1,4 @@
+"use strict";
 import * as d3 from "d3";
 d3.select("#root")
     .append("h1")
@@ -11,7 +12,24 @@ d3.json("./351_weather.json").then( (data) => {
 
 
 function processWeatherData (hourly) {
-    render(hourly);
+    // console.log(hourly);
+    const weather = [];
+    const wtable = {};
+    hourly.forEach( (h) => {
+        if (wtable[h.icon] !== undefined) {
+            wtable[h.icon] += 1;
+        } else {
+            wtable[h.icon] = 1;
+        }
+    });
+    Object.keys(wtable).forEach( (w) => {
+        weather.push({
+            name: w,
+            value: wtable[w]
+        });
+    });
+    weather.reverse();
+    render(weather);
 }
 
 function render (data) {
@@ -20,7 +38,7 @@ function render (data) {
 
     const arcs = d3.pie()
         .sort(null)
-        .value((d) => { return d.time; });
+        .value((d) => { return d.value; });
     const svg = d3.select("svg");
     const width = +svg.attr("width");
     const height = +svg.attr("height");
@@ -42,17 +60,20 @@ function render (data) {
 
     arc.append("path")
         .attr("d", path)
-        .attr("fill", (d) => { color(d.data.icon); })
+        .attr("fill", d => color(d.data.name) );
 
 }
 
 // helper fn
 function color(prop_name) {
+
+    console.log(prop_name);
+
     const prop_colors = {
-        "clear-day": "#C0C0C0",
-        "clear-night": "#BBDD00",
-        "partly-cloudy-day": "#8899CC",
-        "partly-cloudy-night": "#77BBDD"
+        "clear-day": "#77BBDD",
+        "clear-night": "#223355",
+        "partly-cloudy-day": "#C0C0C0",
+        "partly-cloudy-night": "#606060"
     };
     return prop_colors[prop_name];
 }
