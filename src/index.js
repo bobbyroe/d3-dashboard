@@ -6,7 +6,9 @@ d3.select("#root")
     .text(`D3 version: ${d3.version}`);
 
 // Loading external data
-d3.json("./351_weather.json").then( (data) => {
+// TODO - fetch weather data in real time from
+// dark-sky
+d3.json("./TMO-weather.json").then( (data) => {
     processWeatherData(data.hourly.data);
 }, (reason) => { console.log(reason); });
 
@@ -68,12 +70,16 @@ function render (data) {
 function color(prop_name) {
 
     console.log(prop_name);
-
     const prop_colors = {
         "clear-day": "#77BBDD",
         "clear-night": "#223355",
+        "cloudy": "#E0E0E0",
         "partly-cloudy-day": "#C0C0C0",
         "partly-cloudy-night": "#606060"
     };
-    return prop_colors[prop_name];
+    let col = prop_colors[prop_name] !== undefined
+        ? prop_colors[prop_name]
+        : "#FF0000"; 
+    
+    return col;
 }
